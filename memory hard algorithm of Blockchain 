@@ -1,0 +1,85 @@
+import hashlib
+
+import os
+
+ 
+
+def memory_hard_function(password, salt=None, n=1024):
+
+    """
+
+    A simplified version of a memory-hard function.
+
+   
+
+    Args:
+
+        password (str): The password to hash.
+
+        salt (str): The salt to use in the hashing process.
+
+        n (int): The number of memory blocks to allocate.
+
+       
+
+    Returns:
+
+        str: A hexadecimal hash of the result.
+
+    """
+
+   
+
+    if salt is None:
+
+        salt = os.urandom(16)  # Generate a random 16-byte salt
+
+ 
+
+    # Convert password and salt to bytes if necessary
+
+    password = password.encode('utf-8') if isinstance(password, str) else password
+
+    salt = salt.encode('utf-8') if isinstance(salt, str) else salt
+
+   
+
+    # Allocate memory and initialize it with hashed values
+
+    memory_blocks = []
+
+    hash_input = password + salt
+
+ 
+
+    for i in range(n):
+
+        # Generate a hash and store it in memory
+
+        hashed = hashlib.sha256(hash_input).digest()
+
+        memory_blocks.append(hashed)
+
+        hash_input = hashed
+
+   
+
+    # Combine all memory blocks to generate the final result
+
+    result = b''.join(memory_blocks)
+
+    final_hash = hashlib.sha256(result).hexdigest()
+
+ 
+
+    return final_hash
+
+ 
+
+# Example usage
+
+password = "mysecretpassword"
+
+salt = "randomsalt"
+
+print(memory_hard_function(password, salt))
